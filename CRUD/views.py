@@ -1,39 +1,36 @@
 from rest_framework import viewsets
-from .models import User, Business, Product, Service, Event, Review, SharedProduct, Promotion, SearchFilter
-from .serializers import UserSerializer, BusinessSerializer, ProductSerializer, ServiceSerializer, EventSerializer, ReviewSerializer, SharedProductSerializer, PromotionSerializer, SearchFilterSerializer
+from .models import UsuarioNormal, Negocio, Categoria, Producto, Comentario, Respuesta
+from .serializers import (
+    UsuarioNormalSerializer, NegocioSerializer, CategoriaSerializer,
+    ProductoSerializer, ComentarioSerializer, RespuestaSerializer
+)
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+# ViewSet de Usuario Normal
+class UsuarioNormalViewSet(viewsets.ModelViewSet):
+    queryset = UsuarioNormal.objects.all()
+    serializer_class = UsuarioNormalSerializer
 
-class BusinessViewSet(viewsets.ModelViewSet):
-    queryset = Business.objects.all()
-    serializer_class = BusinessSerializer
+# ViewSet de Negocio
+class NegocioViewSet(viewsets.ModelViewSet):
+    queryset = Negocio.objects.all()
+    serializer_class = NegocioSerializer
 
-class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+# ViewSet de Categoria
+class CategoriaViewSet(viewsets.ModelViewSet):
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
 
-class ServiceViewSet(viewsets.ModelViewSet):
-    queryset = Service.objects.all()
-    serializer_class = ServiceSerializer
+# ViewSet de Producto
+class ProductoViewSet(viewsets.ModelViewSet):
+    queryset = Producto.objects.all()
+    serializer_class = ProductoSerializer
 
-class EventViewSet(viewsets.ModelViewSet):
-    queryset = Event.objects.all()
-    serializer_class = EventSerializer
+# ViewSet de Comentario
+class ComentarioViewSet(viewsets.ModelViewSet):
+    queryset = Comentario.objects.all()
+    serializer_class = ComentarioSerializer
 
-class ReviewViewSet(viewsets.ModelViewSet):
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
-
-class SharedProductViewSet(viewsets.ModelViewSet):
-    queryset = SharedProduct.objects.all()
-    serializer_class = SharedProductSerializer
-
-class PromotionViewSet(viewsets.ModelViewSet):
-    queryset = Promotion.objects.all()
-    serializer_class = PromotionSerializer
-
-class SearchFilterViewSet(viewsets.ModelViewSet):
-    queryset = SearchFilter.objects.all()
-    serializer_class = SearchFilterSerializer
+# ViewSet de Respuesta
+class RespuestaViewSet(viewsets.ModelViewSet):
+    queryset = Respuesta.objects.all()
+    serializer_class = RespuestaSerializer

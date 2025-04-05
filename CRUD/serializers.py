@@ -1,83 +1,57 @@
 from rest_framework import serializers
-from .models import User, Business, Product, Service, Event, Review, SharedProduct, Promotion, SearchFilter
+from .models import UsuarioNormal, Negocio, Categoria, Producto, Comentario, Respuesta
 
-# Serializer de Usuario
-class UserSerializer(serializers.ModelSerializer):
-    saved_products = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), many=True, required=False)
-
+# Serializer de Usuario Normal
+class UsuarioNormalSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'saved_products']
+        model = UsuarioNormal
+        fields = ['id', 'nombre_usuario', 'nombre', 'password', 'foto_perfil', 'productos_favoritos', 'tipo_usuario']
 
 # Serializer de Negocio
-class BusinessSerializer(serializers.ModelSerializer):
+class NegocioSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Business
-        fields = [
-            'id', 'name', 'schedule', 'photo', 'category', 'slogan', 
-            'address', 'latitude', 'longitude', 'product_categories', 
-            'contact_number', 'facebook_contact', 'website', 'has_shipping'
-        ]
+        model = Negocio
+        fields = ['id', 'nombre_usuario', 'nombre', 'direccion', 'password', 'foto_perfil', 'productos_favoritos', 'tipo_usuario']
+
+# Serializer de Categoria
+class CategoriaSerializer(serializers.ModelSerializer):
+    negocio_id = serializers.PrimaryKeyRelatedField(queryset=Negocio.objects.all(), source='negocio')  # Permite recibir el ID del negocio
+
+    class Meta:
+        model = Categoria
+        fields = ['id', 'nombre', 'negocio_id']  # 'negocio' se cambia por 'negocio_id' para manejar el ID
+
 
 # Serializer de Producto
-class ProductSerializer(serializers.ModelSerializer):
-    business = BusinessSerializer(read_only=True)
-    
-    class Meta:
-        model = Product
-        fields = [
-            'id', 'name', 'price', 'stock', 'category', 'photo', 
-            'video_review', 'sku', 'description', 'brand', 'status', 'business'
-        ]
-
-# Serializer de Servicio
-class ServiceSerializer(serializers.ModelSerializer):
-    business = BusinessSerializer(read_only=True)
+class ProductoSerializer(serializers.ModelSerializer):
+    # Relacionar negocio y categoria por sus IDs
+    negocio_id = serializers.PrimaryKeyRelatedField(queryset=Negocio.objects.all(), source='negocio')
+    categoria_id = serializers.PrimaryKeyRelatedField(queryset=Categoria.objects.all(), source='categoria')
 
     class Meta:
-        model = Service
-        fields = ['id', 'business', 'name', 'description', 'materials_used', 'estimated_time', 'category', 'service_area']
+        model = Producto
+        fields = ['id', 'nombre', 'descripcion', 'imagen_url', 'estado', 'negocio_id', 'categoria_id']
 
-# Serializer de Evento
-class EventSerializer(serializers.ModelSerializer):
-    businesses = BusinessSerializer(many=True, read_only=True)
+    def create(self, validated_data):
+        negocio = validated_data.pop('negocio')
+        categoria = validated_data.pop('categoria')
+        producto = Producto.objects.create(negocio=negocio, categoria=categoria, **validated_data)
+        return producto
 
-    class Meta:
-        model = Event
-        fields = ['id', 'name', 'type', 'address', 'latitude', 'longitude', 'start_time', 'end_time', 'entry_price', 
-                  'photo', 'description', 'businesses', 'video_url']
-
-# Serializer de Comentario y Calificación
-class ReviewSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    product = ProductSerializer(read_only=True, required=False)
-    business = BusinessSerializer(read_only=True, required=False)
+# Serializer de Comentario
+class ComentarioSerializer(serializers.ModelSerializer):
+    usuario = serializers.PrimaryKeyRelatedField(queryset=UsuarioNormal.objects.all())  # Aseguramos la relación con el usuario
+    producto = serializers.PrimaryKeyRelatedField(queryset=Producto.objects.all())  # Relacionamos con el producto
 
     class Meta:
-        model = Review
-        fields = ['id', 'user', 'product', 'business', 'rating', 'comment', 'created_at']
+        model = Comentario
+        fields = ['id', 'usuario', 'producto', 'texto', 'calificacion', 'creado_en']
 
-# Serializer de Producto Compartido
-class SharedProductSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    product = ProductSerializer(read_only=True)
-
-    class Meta:
-        model = SharedProduct
-        fields = ['id', 'user', 'product', 'shared_at']
-
-# Serializer de Promoción
-class PromotionSerializer(serializers.ModelSerializer):
-    business = BusinessSerializer(read_only=True)
+# Serializer de Respuesta
+class RespuestaSerializer(serializers.ModelSerializer):
+    comentario = serializers.PrimaryKeyRelatedField(queryset=Comentario.objects.all())  # Relación con el comentario
+    negocio = serializers.PrimaryKeyRelatedField(queryset=Negocio.objects.all())  # Relación con el negocio
 
     class Meta:
-        model = Promotion
-        fields = ['id', 'business', 'description', 'start_date', 'end_date']
-
-# Serializer de Filtro de Búsqueda
-class SearchFilterSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-
-    class Meta:
-        model = SearchFilter
-        fields = ['id', 'user', 'category', 'price_min', 'price_max', 'product_name', 'location', 'last_search_at']
+        model = Respuesta
+        fields = ['id', 'comentario', 'negocio', 'texto', 'creado_en']
