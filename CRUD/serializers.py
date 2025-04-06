@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import UsuarioNormal, Negocio, Categoria, Producto, Comentario, Respuesta
+from .models import UsuarioNormal, Negocio, Categoria, Producto, Comentario, Respuesta, Likes, Calificacion
 
 # Serializer de Usuario Normal
 class UsuarioNormalSerializer(serializers.ModelSerializer):
@@ -21,6 +21,27 @@ class CategoriaSerializer(serializers.ModelSerializer):
         model = Categoria
         fields = ['id', 'nombre', 'negocio_id']  # 'negocio' se cambia por 'negocio_id' para manejar el ID
 
+class LikesSerializer(serializers.ModelSerializer):
+    id_usuario = serializers.PrimaryKeyRelatedField(queryset=UsuarioNormal.objects.all())  # Relación con el usuario
+    id_producto = serializers.PrimaryKeyRelatedField(queryset=Producto.objects.all())  # Relación con el producto
+
+    class Meta:
+        model = Likes
+        fields = ['id', 'id_usuario', 'id_producto', 'like']
+
+class CalificacionSerializer(serializers.ModelSerializer):
+    id_usuario = serializers.PrimaryKeyRelatedField(queryset=UsuarioNormal.objects.all())  # Relación con el usuario
+    id_producto = serializers.PrimaryKeyRelatedField(queryset=Producto.objects.all())  # Relación con el producto
+
+    # Validar que la calificación esté entre 1 y 5
+    def validate_calificacion(self, value):
+        if value < 1 or value > 5:
+            raise serializers.ValidationError("La calificación debe ser entre 1 y 5.")
+        return value
+
+    class Meta:
+        model = Calificacion
+        fields = ['id', 'id_usuario', 'id_producto', 'calificacion']
 
 # Serializer de Producto
 class ProductoSerializer(serializers.ModelSerializer):
@@ -30,7 +51,7 @@ class ProductoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Producto
-        fields = ['id', 'nombre', 'descripcion', 'imagen_url', 'estado', 'negocio_id', 'categoria_id']
+        fields = ['id', 'nombre', 'precio', 'descripcion', 'imagen_url', 'estado', 'negocio_id', 'categoria_id', 'creado_en', 'actualizado_en']
 
     def create(self, validated_data):
         negocio = validated_data.pop('negocio')

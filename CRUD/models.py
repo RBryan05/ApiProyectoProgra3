@@ -40,6 +40,7 @@ class Producto(models.Model):
         ('inactivo', 'Inactivo'),
     )
     nombre = models.CharField(max_length=255)
+    precio = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)  # Precio del producto
     descripcion = models.TextField()
     imagen_url = models.URLField(max_length=500, null=True, blank=True)  # Enlace de la imagen del producto
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='productos')
@@ -50,6 +51,16 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+class Calificacion(models.Model):
+    id_usuario = models.ForeignKey(UsuarioNormal, on_delete=models.CASCADE)
+    id_producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    calificacion = models.IntegerField(choices=[(i, f'{i} estrellas') for i in range(1, 6)], default=0)
+
+class Likes(models.Model):
+    id_usuario = models.ForeignKey(UsuarioNormal, on_delete=models.CASCADE)
+    id_producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    like = models.BooleanField(default=False)
 
 # Modelo de Comentarios
 class Comentario(models.Model):

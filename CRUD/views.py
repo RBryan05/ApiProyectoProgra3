@@ -1,8 +1,8 @@
 from rest_framework import viewsets
-from .models import UsuarioNormal, Negocio, Categoria, Producto, Comentario, Respuesta
+from .models import UsuarioNormal, Negocio, Categoria, Producto, Comentario, Respuesta, Likes, Calificacion
 from .serializers import (
     UsuarioNormalSerializer, NegocioSerializer, CategoriaSerializer,
-    ProductoSerializer, ComentarioSerializer, RespuestaSerializer
+    ProductoSerializer, ComentarioSerializer, RespuestaSerializer, LikesSerializer, CalificacionSerializer
 )
 
 # ViewSet de Usuario Normal
@@ -34,3 +34,11 @@ class ComentarioViewSet(viewsets.ModelViewSet):
 class RespuestaViewSet(viewsets.ModelViewSet):
     queryset = Respuesta.objects.all()
     serializer_class = RespuestaSerializer
+
+class LikesViewSet(viewsets.ModelViewSet):
+    queryset = Likes.objects.all()
+    serializer_class = LikesSerializer
+
+class CalificacionViewSet(viewsets.ModelViewSet):
+    queryset = Calificacion.objects.all()
+    serializer_class = CalificacionSerializer
