@@ -11,7 +11,7 @@ class UsuarioNormalSerializer(serializers.ModelSerializer):
 class NegocioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Negocio
-        fields = ['id', 'nombre_usuario', 'nombre', 'direccion', 'password', 'foto_perfil', 'productos_favoritos', 'tipo_usuario']
+        fields = ['id', 'nombre_usuario', 'nombre', 'direccion', 'descripcion', 'password', 'foto_perfil', 'productos_favoritos', 'tipo_usuario']
 
 # Serializer de Categoria
 class CategoriaSerializer(serializers.ModelSerializer):
@@ -19,7 +19,7 @@ class CategoriaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Categoria
-        fields = ['id', 'nombre', 'negocio_id']  # 'negocio' se cambia por 'negocio_id' para manejar el ID
+        fields = ['id', 'nombre', 'imagen_url', 'negocio_id']  # 'negocio' se cambia por 'negocio_id' para manejar el ID
 
 class LikesSerializer(serializers.ModelSerializer):
     id_usuario = serializers.PrimaryKeyRelatedField(queryset=UsuarioNormal.objects.all())  # Relación con el usuario

@@ -5,7 +5,7 @@ class UsuarioNormal(models.Model):
     nombre_usuario = models.CharField(max_length=255, unique=True)  # Nombre de usuario único
     nombre = models.CharField(max_length=255)  # Nombre del usuario, puede repetirse
     password = models.CharField(max_length=255)
-    foto_perfil = models.URLField(null=True, blank=True)  # Enlace de la foto de perfil
+    foto_perfil = models.URLField(max_length=1000,null=True, blank=True)  # Enlace de la foto de perfil
     productos_favoritos = models.JSONField(null=True, blank=True)  # Array de IDs de productos favoritos
     tipo_usuario = models.CharField(max_length=50, default='normal', editable=False)  # Tipo de usuario, por defecto 'normal'
 
@@ -17,8 +17,9 @@ class Negocio(models.Model):
     nombre_usuario = models.CharField(max_length=255, unique=True)  # Nombre de usuario único
     nombre = models.CharField(max_length=255)  # Nombre del negocio, puede repetirse
     direccion = models.CharField(max_length=455, blank=True)  # Dirección del negocio
+    descripcion = models.TextField(max_length=200, null=True, blank=True)  # Descripción del negocio
     password = models.CharField(max_length=255)
-    foto_perfil = models.URLField(null=True, blank=True)  # Enlace de la foto de perfil
+    foto_perfil = models.URLField(max_length=1000,null=True, blank=True)  # Enlace de la foto de perfil
     productos_favoritos = models.JSONField(null=True, blank=True)  # Array de IDs de productos favoritos
     tipo_usuario = models.CharField(max_length=50, default='negocio', editable=False)  # Tipo de usuario, por defecto 'negocio'
 
@@ -28,6 +29,7 @@ class Negocio(models.Model):
 # Modelo de Categoría de productos
 class Categoria(models.Model):
     nombre = models.CharField(max_length=255)
+    imagen_url = models.URLField(max_length=1000, null=True, blank=True)  # Enlace de la imagen de la categoría
     negocio = models.ForeignKey(Negocio, on_delete=models.CASCADE, related_name='categorias')  # Relación con el negocio
 
     def __str__(self):
@@ -42,7 +44,7 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=255)
     precio = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)  # Precio del producto
     descripcion = models.TextField()
-    imagen_url = models.URLField(max_length=500, null=True, blank=True)  # Enlace de la imagen del producto
+    imagen_url = models.URLField(max_length=1000, null=True, blank=True)  # Enlace de la imagen del producto
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='productos')
     negocio = models.ForeignKey(Negocio, on_delete=models.CASCADE, related_name='productos')
     estado = models.CharField(max_length=10, choices=ESTADOS, default='activo')
