@@ -18,6 +18,7 @@ class Negocio(models.Model):
     nombre = models.CharField(max_length=255)  # Nombre del negocio, puede repetirse
     direccion = models.CharField(max_length=455, blank=True)  # Dirección del negocio
     descripcion = models.TextField(max_length=200, null=True, blank=True)  # Descripción del negocio
+    telefono = models.CharField(max_length=20, null=True, blank=True)  # Teléfono del negocio
     password = models.CharField(max_length=255)
     foto_perfil = models.URLField(max_length=1000,null=True, blank=True)  # Enlace de la foto de perfil
     productos_favoritos = models.JSONField(null=True, blank=True)  # Array de IDs de productos favoritos

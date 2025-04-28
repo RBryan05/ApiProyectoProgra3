@@ -11,7 +11,7 @@ class UsuarioNormalSerializer(serializers.ModelSerializer):
 class NegocioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Negocio
-        fields = ['id', 'nombre_usuario', 'nombre', 'direccion', 'descripcion', 'password', 'foto_perfil', 'productos_favoritos', 'tipo_usuario']
+        fields = ['id', 'nombre_usuario', 'nombre', 'direccion', 'telefono', 'descripcion', 'password', 'foto_perfil', 'productos_favoritos', 'tipo_usuario']
 
 # Serializer de Categoria
 class CategoriaSerializer(serializers.ModelSerializer):
