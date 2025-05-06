@@ -66,22 +66,25 @@ class Likes(models.Model):
     like = models.BooleanField(default=False)
 
 # Modelo de Comentarios
+from django.core.exceptions import ValidationError
+from django.db import models
+
 class Comentario(models.Model):
-    usuario = models.ForeignKey(UsuarioNormal, on_delete=models.CASCADE)
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='comentarios')
+    usuario = models.ForeignKey('UsuarioNormal', on_delete=models.CASCADE, null=True, blank=True)
+    negocio = models.ForeignKey('Negocio', on_delete=models.CASCADE, null=True, blank=True)
+    producto = models.ForeignKey('Producto', on_delete=models.CASCADE, related_name='comentarios')
     texto = models.TextField()
-    calificacion = models.PositiveIntegerField(choices=[(i, f'{i} estrellas') for i in range(1, 6)], default=5)
+    calificacion = models.PositiveIntegerField(choices=[(i, f'{i} estrellas') for i in range(1, 6)], default=5, null=True, blank=True)  # Calificación opcional
+    esRespuesta = models.BooleanField(default=False)  # Indica si es una respuesta a otro comentario
+    comentario_respuesta = models.IntegerField(null=True, blank=True)  # ID del comentario al que responde
     creado_en = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f'Comentario de {self.usuario.nombre_usuario} en {self.producto.nombre}'
-
-# Modelo de Respuestas a Comentarios (Solo negocios pueden responder)
-class Respuesta(models.Model):
-    comentario = models.ForeignKey(Comentario, on_delete=models.CASCADE, related_name='respuestas')
-    negocio = models.ForeignKey(Negocio, on_delete=models.CASCADE)
-    texto = models.TextField()
-    creado_en = models.DateTimeField(auto_now_add=True)
+    def clean(self):
+        if self.usuario and self.negocio:
+            raise ValidationError("Un comentario no puede tener tanto un usuario como un negocio asignado. Debe ser uno solo.")
+        if not self.usuario and not self.negocio:
+            raise ValidationError("Debe asignarse un usuario o un negocio como autor del comentario.")
 
     def __str__(self):
-        return f'Respuesta de {self.negocio.nombre_usuario} a {self.comentario.usuario.nombre_usuario}'
+        autor = self.usuario.nombre_usuario if self.usuario else self.negocio.nombre_negocio if self.negocio else "Sin autor"
+        return f'Comentario de {autor} en {self.producto.nombre}'

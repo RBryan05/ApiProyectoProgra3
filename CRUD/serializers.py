@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import UsuarioNormal, Negocio, Categoria, Producto, Comentario, Respuesta, Likes, Calificacion
+from .models import UsuarioNormal, Negocio, Categoria, Producto, Comentario, Likes, Calificacion
 
 # Serializer de Usuario Normal
 class UsuarioNormalSerializer(serializers.ModelSerializer):
@@ -61,18 +61,22 @@ class ProductoSerializer(serializers.ModelSerializer):
 
 # Serializer de Comentario
 class ComentarioSerializer(serializers.ModelSerializer):
-    usuario = serializers.PrimaryKeyRelatedField(queryset=UsuarioNormal.objects.all())  # Aseguramos la relación con el usuario
-    producto = serializers.PrimaryKeyRelatedField(queryset=Producto.objects.all())  # Relacionamos con el producto
+    usuario = serializers.PrimaryKeyRelatedField(
+        queryset=UsuarioNormal.objects.all(),
+        required=False,
+        allow_null=True
+    )
+    negocio = serializers.PrimaryKeyRelatedField(
+            queryset=Negocio.objects.all(), 
+            required=False,
+            allow_null=True
+    )    
+    negocio = serializers.PrimaryKeyRelatedField(
+        queryset=Negocio.objects.all(), 
+        required=False,
+        allow_null=True
+    )
 
     class Meta:
         model = Comentario
-        fields = ['id', 'usuario', 'producto', 'texto', 'calificacion', 'creado_en']
-
-# Serializer de Respuesta
-class RespuestaSerializer(serializers.ModelSerializer):
-    comentario = serializers.PrimaryKeyRelatedField(queryset=Comentario.objects.all())  # Relación con el comentario
-    negocio = serializers.PrimaryKeyRelatedField(queryset=Negocio.objects.all())  # Relación con el negocio
-
-    class Meta:
-        model = Respuesta
-        fields = ['id', 'comentario', 'negocio', 'texto', 'creado_en']
+        fields = ['id', 'usuario', 'negocio', 'producto', 'comentario_respuesta', 'texto', 'calificacion', 'esRespuesta', 'creado_en']
